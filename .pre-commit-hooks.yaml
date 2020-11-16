@@ -5,3 +5,10 @@
   language: script
   files: (\.tf)$
   exclude: \.terraform\/.*$
+
+- id: bq_view_update
+  name: Check for Big Query view updates
+  description: When Big Query view sql files are updated ensure tf changes exist too so Alantis will plan correctly
+  entry: bq_view_update.sh
+  language: script
+  pass_filenames: false
