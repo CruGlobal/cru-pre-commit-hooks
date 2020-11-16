@@ -17,7 +17,7 @@ tf_check_and_update()
     fi
 }
 
-if [ `git diff --name-only --staged | grep $BQ_SQL_DIR/*.sql | wc -l` -gt 0 ]
+if [ `git diff --name-only --staged | grep $BQ_SQL_DIR/.*\.sql | wc -l` -gt 0 ]
 then
   echo "Checking Stage tf files"
   tf_check_and_update $DW_TF_BASE/stage/big-query/views
