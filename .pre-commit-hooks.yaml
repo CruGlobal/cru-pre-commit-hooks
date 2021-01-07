@@ -5,3 +5,11 @@
   language: script
   files: (\.tf)$
   exclude: \.terraform\/.*$
+
+- id: tf_provider_lock
+  name: Add Terraform provider dependency lock file
+  description: Add MacOS and Linux provider hashes to dependency lock file
+  entry: tf_providers_lock.sh
+  always_run: true
+  language: script
+  pass_filenames: false
