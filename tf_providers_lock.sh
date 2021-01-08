@@ -17,15 +17,18 @@ for file in $staged_files; do
 done
 
 for uniq in $(echo "${staged_dirs[@]}" | tr ' ' '\n' | sort -u | tr '\n' ' '); do
-    if [ -f "$uniq/terraform.tf" ] && [ ! -f "$uniq/$tf_lock_file" ]
+    if [ -f "$uniq/terraform.tf" ]
     then
+      if [ ! -f "$uniq/$tf_lock_file" ]
+      then
         echo "Creating missing lock file in the directory $uniq"
         cd $uniq && terraform providers lock -platform=darwin_amd64 -platform=linux_amd64
         retval=1
-    elif [ `git ls-files "$uniq/$tf_lock_file" | wc -l` -eq 0 ] && [ `git diff --name-only --staged | grep "$uniq/$tf_lock_file" | wc -l` -eq 0 ]
-    then
+      elif [ `git ls-files "$uniq/$tf_lock_file" | wc -l` -eq 0 ] && [ `git diff --name-only --staged | grep "$uniq/$tf_lock_file" | wc -l` -eq 0 ]
+      then
         echo "Provider dependency lock file exists in the directory $uniq but is not tracked in git or staged for commit. Run 'git add "$uniq/$tf_lock_file"'"
         retval=1
+      fi
     fi
 done
 
