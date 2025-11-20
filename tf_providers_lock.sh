@@ -22,7 +22,7 @@ for uniq in $(echo "${staged_dirs[@]}" | tr ' ' '\n' | sort -u | tr '\n' ' '); d
       if [ ! -f "$uniq/$tf_lock_file" ]
       then
         echo "Creating missing lock file in the directory $uniq"
-        cd $uniq && terraform providers lock -platform=darwin_amd64 -platform=darwin_arm64 -platform=linux_amd64
+        cd $uniq && terraform init -backend=false && terraform providers lock -platform=darwin_arm64 -platform=linux_amd64
         retval=1
       elif [ `git ls-files "$uniq/$tf_lock_file" | wc -l` -eq 0 ] && [ `git diff --name-only --staged | grep "$uniq/$tf_lock_file" | wc -l` -eq 0 ]
       then
