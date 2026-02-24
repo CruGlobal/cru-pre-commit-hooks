@@ -14,10 +14,10 @@
   language: script
   pass_filenames: false
 
-- id: tf_version_check
-  name: Terraform version and backend check
+- id: tf_validate_config
+  name: Terraform configuration validation
   description: Enforce terraform version matches .tool-versions and s3 backends use use_lockfile instead of dynamodb_table
-  entry: tf_version_check.sh
+  entry: tf_validate_config.sh
   always_run: true
   language: script
   pass_filenames: false
