@@ -63,18 +63,32 @@ for file in $tf_files; do
     file_modified=true
   fi
 
-  # --- Check 3: required_version should be ">= <version>" from .tool-versions ---
+  # --- Check 3: required_version in terraform {} block should be "~> <version>" from .tool-versions ---
   if [ -n "$required_version" ]; then
-    if grep -qE 'required_version[[:space:]]*=[[:space:]]*"[^"]*"' "$file" 2>/dev/null; then
-      current_constraint=$(grep -oE 'required_version[[:space:]]*=[[:space:]]*"[^"]*"' "$file" | head -1)
+    # Use awk to only match required_version inside the top-level terraform {} block (depth 1)
+    in_terraform_block=$(awk '
+      /^terraform[[:space:]]*\{/ { in_tf=1; depth=1; next }
+      in_tf && /\{/ { depth++ }
+      in_tf && /\}/ { depth--; if (depth==0) in_tf=0 }
+      in_tf && depth==1 && /required_version[[:space:]]*=/ { print; exit }
+    ' "$file")
+
+    if [ -n "$in_terraform_block" ]; then
       expected='required_version = "~> '"$required_version"'"'
-      if [ "$current_constraint" != "$expected" ]; then
+      # Trim whitespace for comparison
+      current_trimmed=$(echo "$in_terraform_block" | sed 's/^[[:space:]]*//')
+      if [ "$current_trimmed" != "$expected" ]; then
         echo "Updating required_version in $file to \"~> $required_version\""
-        if sed --version >/dev/null 2>&1; then
-          sed -i 's/required_version[[:space:]]*=[[:space:]]*"[^"]*"/required_version = "~> '"$required_version"'"/' "$file"
-        else
-          sed -i '' 's/required_version[[:space:]]*=[[:space:]]*"[^"]*"/required_version = "~> '"$required_version"'"/' "$file"
-        fi
+        # Replace only within the terraform {} block using awk
+        awk -v new_ver="$required_version" '
+          /^terraform[[:space:]]*\{/ { in_tf=1; depth=1; print; next }
+          in_tf && /\{/ { depth++ }
+          in_tf && /\}/ { depth--; if (depth==0) in_tf=0 }
+          in_tf && depth==1 && /required_version[[:space:]]*=/ {
+            sub(/required_version[[:space:]]*=[[:space:]]*"[^"]*"/, "required_version = \"~> " new_ver "\"")
+          }
+          { print }
+        ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
         file_modified=true
       fi
     fi
