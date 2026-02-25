@@ -18,6 +18,6 @@
   name: Terraform configuration validation
   description: Enforce terraform version matches .tool-versions and s3 backends use use_lockfile instead of dynamodb_table
   entry: tf_validate_config.sh
+  always_run: true
   language: script
-  files: (\.tf)$
-  exclude: \.terraform\/.*$
+  pass_filenames: false
