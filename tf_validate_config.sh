@@ -5,7 +5,7 @@
 # 2. S3 backend blocks use "use_lockfile = true" instead of "dynamodb_table = "terraform-state-lock""
 # 3. required_version constraint is updated to "~> <version>" from .tool-versions
 # This hook auto-corrects issues it finds, then exits 1 so the user can review and re-commit.
-# Works both locally (staged files) and in CI (--all-files mode).
+# Pre-commit passes .tf filenames as arguments.
 
 set -e
 
@@ -41,14 +41,8 @@ else
   echo "WARNING: No .tool-versions file found, skipping terraform version check"
 fi
 
-# --- Collect .tf files to check ---
-# Use staged files locally, fall back to finding all .tf files for CI (--all-files mode)
-tf_files=$(git diff --cached --name-only --diff-filter=ACM -- '*.tf' 2>/dev/null || true)
-if [ -z "$tf_files" ]; then
-  tf_files=$(git ls-files -- '*.tf' 2>/dev/null || true)
-fi
-
-for file in $tf_files; do
+# --- Check .tf files passed by pre-commit ---
+for file in "$@"; do
   [ -f "$file" ] || continue
   file_modified=false
 
