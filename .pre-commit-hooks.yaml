@@ -1,7 +1,7 @@
 - id: s3_backend_key
   name: Terrafrom s3 backend key paths
   description: Enforce all terraform s3 backend key paths match folder structure.
-  entry: s3_backend_key.rb
+  entry: s3_backend_key.sh
   language: script
   files: (\.tf)$
   exclude: \.terraform\/.*$
@@ -10,6 +10,14 @@
   name: Add Terraform provider dependency lock file
   description: Add MacOS and Linux provider hashes to dependency lock file
   entry: tf_providers_lock.sh
+  always_run: true
+  language: script
+  pass_filenames: false
+
+- id: tf_validate_config
+  name: Terraform configuration validation
+  description: Enforce terraform version matches .tool-versions and s3 backends use use_lockfile instead of dynamodb_table
+  entry: tf_validate_config.sh
   always_run: true
   language: script
   pass_filenames: false
