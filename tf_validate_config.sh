@@ -3,12 +3,14 @@
 # Pre-commit hook to enforce:
 # 1. Terraform version matches what the repo defines in .tool-versions
 # 2. S3 backend blocks use "use_lockfile = true" instead of "dynamodb_table = "terraform-state-lock""
+# 3. required_version constraint is updated to "~> <version>" from .tool-versions
 # This hook auto-corrects issues it finds, then exits 1 so the user can review and re-commit.
 # Works both locally (staged files) and in CI (--all-files mode).
 
 set -e
 
 retval=0
+modified_files=()
 
 # --- Check 1: Terraform version ---
 tool_versions_file=".tool-versions"
@@ -39,27 +41,55 @@ else
   echo "WARNING: No .tool-versions file found, skipping terraform version check"
 fi
 
-# --- Check 2: S3 backend should use use_lockfile instead of dynamodb_table ---
+# --- Collect .tf files to check ---
 # Use staged files locally, fall back to finding all .tf files for CI (--all-files mode)
-staged_files=$(git diff --cached --name-only --diff-filter=ACM -- '*.tf' 2>/dev/null || true)
-if [ -z "$staged_files" ]; then
-  staged_files=$(git ls-files -- '*.tf' 2>/dev/null || true)
+tf_files=$(git diff --cached --name-only --diff-filter=ACM -- '*.tf' 2>/dev/null || true)
+if [ -z "$tf_files" ]; then
+  tf_files=$(git ls-files -- '*.tf' 2>/dev/null || true)
 fi
 
-for file in $staged_files; do
+for file in $tf_files; do
   [ -f "$file" ] || continue
-  if grep -q 'dynamodb_table\s*=\s*"terraform-state-lock"' "$file" 2>/dev/null; then
+  file_modified=false
+
+  # --- Check 2: S3 backend should use use_lockfile instead of dynamodb_table ---
+  if grep -q 'dynamodb_table[[:space:]]*=[[:space:]]*"terraform-state-lock"' "$file" 2>/dev/null; then
     echo "Replacing 'dynamodb_table = \"terraform-state-lock\"' with 'use_lockfile = true' in $file"
-    # Use portable sed syntax (works on both macOS and Linux)
     if sed --version >/dev/null 2>&1; then
-      # GNU sed (Linux)
-      sed -i 's/dynamodb_table\s*=\s*"terraform-state-lock"/use_lockfile = true/' "$file"
+      sed -i 's/dynamodb_table[[:space:]]*=[[:space:]]*"terraform-state-lock"/use_lockfile = true/' "$file"
     else
-      # BSD sed (macOS)
       sed -i '' 's/dynamodb_table[[:space:]]*=[[:space:]]*"terraform-state-lock"/use_lockfile = true/' "$file"
     fi
+    file_modified=true
+  fi
+
+  # --- Check 3: required_version should be ">= <version>" from .tool-versions ---
+  if [ -n "$required_version" ]; then
+    if grep -qE 'required_version[[:space:]]*=[[:space:]]*"[^"]*"' "$file" 2>/dev/null; then
+      current_constraint=$(grep -oE 'required_version[[:space:]]*=[[:space:]]*"[^"]*"' "$file" | head -1)
+      expected='required_version = "~> '"$required_version"'"'
+      if [ "$current_constraint" != "$expected" ]; then
+        echo "Updating required_version in $file to \"~> $required_version\""
+        if sed --version >/dev/null 2>&1; then
+          sed -i 's/required_version[[:space:]]*=[[:space:]]*"[^"]*"/required_version = "~> '"$required_version"'"/' "$file"
+        else
+          sed -i '' 's/required_version[[:space:]]*=[[:space:]]*"[^"]*"/required_version = "~> '"$required_version"'"/' "$file"
+        fi
+        file_modified=true
+      fi
+    fi
+  fi
+
+  if [ "$file_modified" = true ]; then
+    modified_files+=("$file")
     retval=1
   fi
+done
+
+# Run terraform fmt on modified files to fix indentation/alignment
+for file in "${modified_files[@]}"; do
+  echo "Formatting $file"
+  terraform fmt "$file" 2>/dev/null || true
 done
 
 if [ $retval = 1 ]; then
