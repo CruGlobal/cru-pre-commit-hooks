@@ -21,6 +21,18 @@ else
   tf_files=$(git diff --cached --name-only --diff-filter=ACM -- '*.tf' 2>/dev/null | grep -v '\.terraform/' || true)
 fi
 
+# Also include terraform.tf from directories with changed .tf files
+# This ensures required_version gets checked even when terraform.tf itself wasn't staged
+if [ -n "$tf_files" ]; then
+  tf_dirs=$(echo "$tf_files" | xargs -I{} dirname {} | sort -u)
+  for dir in $tf_dirs; do
+    if [ -f "$dir/terraform.tf" ] && ! echo "$tf_files" | grep -qx "$dir/terraform.tf"; then
+      tf_files="$tf_files
+$dir/terraform.tf"
+    fi
+  done
+fi
+
 # --- Check 1: Terraform version ---
 tool_versions_file=".tool-versions"
 if [ -f "$tool_versions_file" ]; then
