@@ -21,3 +21,27 @@
   always_run: true
   language: script
   pass_filenames: false
+
+- id: tf_required_files
+  name: Terraform required files
+  description: Enforce every directory with .tf files has terraform.tf and README.md
+  entry: tf_required_files.sh
+  language: script
+  files: (\.tf)$
+  exclude: \.terraform\/.*$
+
+- id: s3_backend_config
+  name: S3 backend bucket and region
+  description: Enforce S3 backend blocks use bucket cru-tf-remote-state in us-east-1
+  entry: s3_backend_config.sh
+  language: script
+  files: (\.tf)$
+  exclude: \.terraform\/.*$
+
+- id: tf_version_constraints
+  name: Terraform provider version constraints
+  description: Enforce provider version constraints use pessimistic operator (~>)
+  entry: tf_version_constraints.sh
+  language: script
+  files: (\.tf)$
+  exclude: \.terraform\/.*$

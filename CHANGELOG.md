@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Added
+- New `tf_required_files` hook: enforces every directory with `.tf` files has `terraform.tf` and `README.md`
+- New `s3_backend_config` hook: enforces S3 backend blocks use bucket `cru-tf-remote-state` in region `us-east-1`, auto-corrects incorrect values
+- New `tf_version_constraints` hook: enforces provider version constraints use pessimistic operator (`~>`)
+
 ## [v1.4.1] - 2026-2-27
 ### Fixed
 - `tf_validate_config` always runs (version check fires even when no `.tf` files changed)
