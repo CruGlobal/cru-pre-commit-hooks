@@ -52,6 +52,9 @@ Modified files are automatically formatted with `terraform fmt`.
 This hook verifies that every directory containing `.tf` files also has both `terraform.tf` and `README.md`. It checks
 only the directories of changed files, not the entire repo.
 
+Some directories are excluded from the `README.md` requirement (e.g., `aws/route53` and its children). The
+`terraform.tf` requirement is always enforced.
+
 #### s3_backend_config
 This hook enforces that all `backend "s3"` blocks use the correct bucket (`cru-tf-remote-state`) and region
 (`us-east-1`). Incorrect values are auto-corrected in place. This complements `s3_backend_key` which validates the

@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Changed
+- `tf_required_files` now excludes `aws/route53` and its child directories from the `README.md` requirement
+
 ## [v1.5.0] - 2026-3-5
 ### Added
 - New `tf_required_files` hook: enforces every directory with `.tf` files has `terraform.tf` and `README.md`
