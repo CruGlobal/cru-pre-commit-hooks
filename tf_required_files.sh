@@ -7,6 +7,11 @@
 
 set -e
 
+# Directories excluded from the README.md requirement (matched as prefix)
+EXCLUDED_README_DIRS=(
+  "aws/route53"
+)
+
 missing=()
 
 # Collect unique directories from the changed .tf files
@@ -19,7 +24,16 @@ for dir in $dirs; do
     missing+=("$dir/terraform.tf")
   fi
 
-  if [ ! -f "$dir/README.md" ]; then
+  # Check README.md unless directory is excluded
+  skip_readme=false
+  for excluded in "${EXCLUDED_README_DIRS[@]}"; do
+    if [[ "$dir" == "$excluded" || "$dir" == "$excluded"/* ]]; then
+      skip_readme=true
+      break
+    fi
+  done
+
+  if [ "$skip_readme" = false ] && [ ! -f "$dir/README.md" ]; then
     missing+=("$dir/README.md")
   fi
 done
