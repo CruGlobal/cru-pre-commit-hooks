@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [v1.5.0] - 2026-3-5
 ### Added
 - New `tf_required_files` hook: enforces every directory with `.tf` files has `terraform.tf` and `README.md`
 - New `s3_backend_config` hook: enforces S3 backend blocks use bucket `cru-tf-remote-state` in region `us-east-1`, auto-corrects incorrect values
@@ -30,7 +31,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [v1.2.0] - 2022-1-24
 - Add support for darwin_amd64
 
-[unreleased]: https://github.com/CruGlobal/cru-pre-commit-hooks/compare/v1.4.1...master
+[unreleased]: https://github.com/CruGlobal/cru-pre-commit-hooks/compare/v1.5.0...master
+[v1.5.0]: https://github.com/CruGlobal/cru-pre-commit-hooks/compare/v1.4.1...v1.5.0
 [v1.4.1]: https://github.com/CruGlobal/cru-pre-commit-hooks/compare/v1.4.0...v1.4.1
 [v1.4.0]: https://github.com/CruGlobal/cru-pre-commit-hooks/compare/v1.2.0...v1.4.0
 [v1.2.0]: https://github.com/CruGlobal/cru-pre-commit-hooks/compare/v1.1.1...v1.2.0
