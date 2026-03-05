@@ -15,12 +15,18 @@ Create or update `.pre-commit-config.yaml`:
     - id: s3_backend_key
     - id: tf_provider_lock
     - id: tf_validate_config
+    - id: tf_required_files
+    - id: s3_backend_config
+    - id: tf_version_constraints
 ```
 
 ## Hooks
 - [`s3_backend_key`](#s3_backend_key) - Enforce the `key` property of `backend "s3"` to match folder paths for terraform files.
 - [`tf_provider_lock`](#tf_provider_lock) - Add MacOS and Linux provider hashes to dependency lock file.
 - [`tf_validate_config`](#tf_validate_config) - Enforce terraform version, backend lockfile, and required_version constraints.
+- [`tf_required_files`](#tf_required_files) - Enforce every terraform directory has `terraform.tf` and `README.md`.
+- [`s3_backend_config`](#s3_backend_config) - Enforce S3 backend uses correct bucket and region.
+- [`tf_version_constraints`](#tf_version_constraints) - Enforce provider version constraints use pessimistic operator (`~>`).
 
 ## Details
 #### s3_backend_key
@@ -41,3 +47,17 @@ This hook auto-corrects three terraform configuration issues:
 - **required_version**: Updates the `required_version` constraint in the `terraform {}` block to `"~> <version>"` from `.tool-versions`.
 
 Modified files are automatically formatted with `terraform fmt`.
+
+#### tf_required_files
+This hook verifies that every directory containing `.tf` files also has both `terraform.tf` and `README.md`. It checks
+only the directories of changed files, not the entire repo.
+
+#### s3_backend_config
+This hook enforces that all `backend "s3"` blocks use the correct bucket (`cru-tf-remote-state`) and region
+(`us-east-1`). Incorrect values are auto-corrected in place. This complements `s3_backend_key` which validates the
+state key path.
+
+#### tf_version_constraints
+This hook checks that provider version constraints in `required_providers` blocks use the pessimistic operator (`~>`).
+Constraints using `=`, `>=`, or bare versions will be flagged. This prevents exact pinning and overly permissive
+version ranges.
