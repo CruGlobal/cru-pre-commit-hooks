@@ -10,7 +10,7 @@ A collection of [pre-commit](https://pre-commit.com/) hooks used by Cru projects
 Create or update `.pre-commit-config.yaml`:
 ```yaml
 - repo: git://github.com/CruGlobal/cru-pre-commit-hooks
-  rev: v1.5.0
+  rev: v1.5.1
   hooks:
     - id: s3_backend_key
     - id: tf_provider_lock

@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [v1.5.1] - 2026-3-5
 ### Changed
 - `tf_required_files` now excludes `aws/route53` and its child directories from the `README.md` requirement
 
@@ -34,7 +35,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [v1.2.0] - 2022-1-24
 - Add support for darwin_amd64
 
-[unreleased]: https://github.com/CruGlobal/cru-pre-commit-hooks/compare/v1.5.0...master
+[unreleased]: https://github.com/CruGlobal/cru-pre-commit-hooks/compare/v1.5.1...master
+[v1.5.1]: https://github.com/CruGlobal/cru-pre-commit-hooks/compare/v1.5.0...v1.5.1
 [v1.5.0]: https://github.com/CruGlobal/cru-pre-commit-hooks/compare/v1.4.1...v1.5.0
 [v1.4.1]: https://github.com/CruGlobal/cru-pre-commit-hooks/compare/v1.4.0...v1.4.1
 [v1.4.0]: https://github.com/CruGlobal/cru-pre-commit-hooks/compare/v1.2.0...v1.4.0
