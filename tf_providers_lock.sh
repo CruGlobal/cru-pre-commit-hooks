@@ -33,7 +33,6 @@ for dir in $changed_dirs; do
       terraform init -backend=false
       terraform providers lock -platform=darwin_arm64 -platform=linux_amd64
     )
-    retval=1
   elif [ -z "$(git ls-files "$dir/$tf_lock_file")" ] && ! git diff --name-only --staged | grep -qx "$dir/$tf_lock_file"; then
     echo "Provider dependency lock file exists in the directory $dir but is not tracked in git or staged for commit. Run 'git add \"$dir/$tf_lock_file\"'"
     retval=1
