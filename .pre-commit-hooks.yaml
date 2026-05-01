@@ -1,5 +1,5 @@
 - id: s3_backend_key
-  name: Terrafrom s3 backend key paths
+  name: Terraform s3 backend key paths
   description: Enforce all terraform s3 backend key paths match folder structure.
   entry: s3_backend_key.sh
   language: script
