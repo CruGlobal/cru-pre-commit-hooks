@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.2](https://github.com/CruGlobal/cru-pre-commit-hooks/compare/v1.5.1...v1.5.2) (2026-05-01)
+
+
+### Bug Fixes
+
+* **provider_lock:** Fixes tf_providers_lock.sh to work locally and in CI. ([#10](https://github.com/CruGlobal/cru-pre-commit-hooks/issues/10)) ([7d9bf2f](https://github.com/CruGlobal/cru-pre-commit-hooks/commit/7d9bf2ffd161b55c35e5cf25b8b1f74c48ef15ff))
+
 ## [unreleased]
 
 ## [v1.5.1] - 2026-3-5
@@ -43,4 +50,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [v1.2.0]: https://github.com/CruGlobal/cru-pre-commit-hooks/compare/v1.1.1...v1.2.0
 [v1.1.1]: https://github.com/CruGlobal/cru-pre-commit-hooks/compare/v1.1.0...v1.1.1
 [v1.1.0]: https://github.com/CruGlobal/cru-pre-commit-hooks/compare/v1.0.0...v1.1.0
-
